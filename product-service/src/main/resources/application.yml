@@ -1,0 +1,9 @@
+spring:
+  application:
+   name: product-serivce
+  cache:
+    type: redis
+    cache-name: product
+    redis:
+      time-to-live: 60000
+      cache-null-values: true

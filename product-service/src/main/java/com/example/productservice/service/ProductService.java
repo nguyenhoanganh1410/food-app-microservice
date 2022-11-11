@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,8 @@ public class ProductService {
 		super();
 		this.productRepository = productRepository;
 	}
-
+	
+//	@CachePut(value = "student", key = "#student.id")
 	public Product create(ProductRequest productRequest) {
 		Product p = new Product(productRequest.getName(), productRequest.getDesc(), productRequest.getPrice(), productRequest.getCategory(), productRequest.getImages());
 		
@@ -40,6 +42,7 @@ public class ProductService {
 		return p;
 	}
 
+	//@Cacheable(value = "product", key = "#id")
 	public ProductReponse getProductById(String id) {
 		System.out.println("product ppp");
 		// TODO Auto-generated method stub
@@ -97,23 +100,6 @@ public class ProductService {
 
 
 
-
-
-//	public List<ProductResponse> getAllProduct() {
-//		List<Product> list =  productRepository.findAll();
-//		
-//	
-//		return list.stream().map(this::mapToReponse).toList();
-//	}
-//
-//
-//
-//
-//	private ProductResponse mapToReponse(Product product) {
-//		// TODO Auto-generated method stub
-//		ProductResponse p = new ProductResponse(product.getId(), product.getName(), product.getDesc(), product.getPrice());
-//		return p;
-//	}
 
 	
 }
