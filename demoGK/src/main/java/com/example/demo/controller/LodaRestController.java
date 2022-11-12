@@ -65,12 +65,13 @@ public class LodaRestController {
               UserDetails userDetails = redisService.loadUserByUsername(user.getUserName());
               System.out.println("details "+userDetails);
               if(userDetails!=null) {
-            	  return new User("Loi", "Loi");
+
+                  throw new AppException(404, " user already exist");
               }else {
     			
             	 redisService.addUser(user);
           		//System.out.println("user"+user);
-            	//userRepository.save(user);
+
             	System.out.println("new user"+user);
 
 //            
@@ -83,7 +84,7 @@ public class LodaRestController {
     }
 
     @PostMapping(value = "/login", 	consumes = "application/json")
-    public String authenticateUser( @Valid @RequestBody LoginRequest loginRequest) {
+    public LoginResponse authenticateUser( @Valid @RequestBody LoginRequest loginRequest) {
     		System.out.println("user: "+loginRequest);
             User user = new User();
           user.setUserName(loginRequest.getUsername());
@@ -107,27 +108,23 @@ public class LodaRestController {
         // Trả về jwt cho người dùng.
         String jwt = tokenProvider.generateToken((CustomUserDetails) ((org.springframework.security.core.Authentication) authentication).getPrincipal());
           
-        return "jwt "+ jwt;
+        return new LoginResponse(jwt);
         
     }
 
-    // Api /api/random yêu cầu phải xác thực mới có thể request
-    @GetMapping("/random")
-    public String randomStuff(){
-    	try {
-    		return "JWT Hợp lệ mới có thể thấy được message này";
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-    	//System.out.println("dat");
+    // Api /api/random  test yêu cầu phải xác thực mới có thể request
+    @GetMapping("/test")
+    public RandomStuff randomStuff(){
+
+    	return  new RandomStuff("JWT hop le moi thay duoc nha bay");
     	
     }
-    @GetMapping("/test")
+    @GetMapping("/random")
     public String test(){
 
             return "test jwt";
 
-        //System.out.println("dat");
+
 
     }
     @GetMapping("/user")
@@ -146,7 +143,7 @@ public class LodaRestController {
                 	 }
                  
                  }
-        	 return null;
+            throw new AppException(404, " User not found");
         
     }
 //    @PostMapping("/mess")

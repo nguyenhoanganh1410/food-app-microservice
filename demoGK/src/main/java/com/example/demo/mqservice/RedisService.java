@@ -1,5 +1,6 @@
 package com.example.demo.mqservice;
 
+import com.example.demo.controller.AppException;
 import com.example.demo.entity.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,11 +37,7 @@ public class RedisService implements  UserDetailsService {
 
 			User user = (User) redisTemplate.opsForHash().get("User", id);
 		if(user ==null){
-			try {
-				throw  new Exception();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			throw  new AppException(404,"user not found");
 		}
 
 		return new CustomUserDetails(user);
@@ -58,6 +55,6 @@ public class RedisService implements  UserDetailsService {
 
 		}
 
-		return null;
+		throw  new AppException(404,"user not found");
 	}
 }
