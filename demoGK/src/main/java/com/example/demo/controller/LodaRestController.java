@@ -15,11 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import com.example.demo.entity.CustomUserDetails;
@@ -62,15 +58,17 @@ public class LodaRestController {
                 User user = new User(loginRequest.getUsername(),(passwordEncoder.encode(loginRequest.getPassword())));
 //              user.setUserName(loginRequest.getUsername());
               //user.setPassWord(passwordEncoder.encode(loginRequest.getPassword()));
-              UserDetails userDetails = redisService.loadUserByUsername(user.getUserName());
+
+                System.out.println("userName: "+user.getUserName());
+              UserDetails userDetails = redisService.loadUserByUsername(loginRequest.getUsername());
               System.out.println("details "+userDetails);
               if(userDetails!=null) {
 
                   throw new AppException(404, " user already exist");
               }else {
-    			
+
             	 redisService.addUser(user);
-          		//System.out.println("user"+user);
+          		System.out.println("user"+user);
 
             	System.out.println("new user"+user);
 
@@ -85,30 +83,35 @@ public class LodaRestController {
 
     @PostMapping(value = "/login", 	consumes = "application/json")
     public LoginResponse authenticateUser( @Valid @RequestBody LoginRequest loginRequest) {
-    		System.out.println("user: "+loginRequest);
+        try {
+            System.out.println("user: "+loginRequest);
             User user = new User();
-          user.setUserName(loginRequest.getUsername());
-          user.setPassWord(passwordEncoder.encode(loginRequest.getPassword()));
-        
-		
-      //  userRepository.save(user);
-          System.out.println("new user"+user);
+            user.setUserName(loginRequest.getUsername());
+            user.setPassWord(passwordEncoder.encode(loginRequest.getPassword()));
+
+
+            //  userRepository.save(user);
+            System.out.println("new user"+user);
 
 //         Xác thực từ username và password.
-    		Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(),
                             loginRequest.getPassword()
                     )
             );
-        // Nếu không xảy ra exception tức là thông tin hợp lệ
-        // Set thông tin authentication vào Security Context
-        SecurityContextHolder.getContext().setAuthentication((org.springframework.security.core.Authentication) authentication);
+            // Nếu không xảy ra exception tức là thông tin hợp lệ
+            // Set thông tin authentication vào Security Context
+            SecurityContextHolder.getContext().setAuthentication((org.springframework.security.core.Authentication) authentication);
 
-        // Trả về jwt cho người dùng.
-        String jwt = tokenProvider.generateToken((CustomUserDetails) ((org.springframework.security.core.Authentication) authentication).getPrincipal());
-          
-        return new LoginResponse(jwt);
+            // Trả về jwt cho người dùng.
+            String jwt = tokenProvider.generateToken((CustomUserDetails) ((org.springframework.security.core.Authentication) authentication).getPrincipal());
+
+            return new LoginResponse(jwt);
+        }catch (Exception e){
+            throw  new AppException(404,"Username or Password Invalid");
+        }
+
         
     }
 
@@ -146,14 +149,16 @@ public class LodaRestController {
             throw new AppException(404, " User not found");
         
     }
-//    @PostMapping("/mess")
-//    public String sendMess(@RequestBody String mess ) throws JsonProcessingException {
-//    		
-//    	producerService.sendToTopic("myTopic", mess);
-//    	
-//    	
-//    	return mess;
-//    	
-//    }
+    @PutMapping("user/update")
+    public  RandomStuff updateUser( @RequestBody LoginRequest loginRequest){
+        User user = new User();
+        user.setId(loginRequest.getId());
+        user.setUserName(loginRequest.getUsername());
+
+        String passEncoder = passwordEncoder.encode(loginRequest.getPassword());
+        user.setPassWord(passEncoder);
+        redisService.updateUser(user);
+        return new RandomStuff("Update user thanh cong "+passEncoder);
+    }
 
 }

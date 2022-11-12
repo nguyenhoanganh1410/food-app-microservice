@@ -55,6 +55,10 @@ public class RedisService implements  UserDetailsService {
 
 		}
 
-		throw  new AppException(404,"user not found");
+		return  null;
 	}
+	public void updateUser(User user){
+		redisTemplate.opsForHash().put("User", user.getId(), user);
+	}
+
 }

@@ -15,6 +15,7 @@ import lombok.Data;
  */
 
 public class LoginRequest {
+	private Long id;
     @NotBlank
     private String username;
 
@@ -29,6 +30,20 @@ public class LoginRequest {
 	}
 	public LoginRequest() {
 		
+	}
+
+	public LoginRequest(Long id, String username, String password) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
