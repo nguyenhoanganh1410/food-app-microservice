@@ -18,6 +18,14 @@ public class EmailDetails {
 		this.subject = subject;
 		this.attachment = attachment;
 	}
+	
+	public EmailDetails(String recipient, String msgBody, String subject) {
+		super();
+		this.recipient = recipient;
+		this.msgBody = msgBody;
+		this.subject = subject;
+	}
+
 	public String getRecipient() {
 		return recipient;
 	}

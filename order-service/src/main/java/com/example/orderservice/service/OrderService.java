@@ -1,16 +1,20 @@
 package com.example.orderservice.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,21 +23,38 @@ import com.example.orderservice.dto.OrderReponse;
 import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
+import com.example.orderservice.event.OrderPlaceEvent;
 import com.example.orderservice.repository.OrderRepository;
 
 @Service
 @Transactional
 public class OrderService {
+	@Autowired
 	private OrderRepository orderRepository;
+	@Autowired
+	private  KafkaTemplate<String, OrderPlaceEvent> kafkaTemplate;
 	
 	
 	
-
-
-	public OrderService(OrderRepository orderRepository) {
+	
+	public OrderService() {
 		super();
-		this.orderRepository = orderRepository;
 	}
+
+
+
+	public OrderService(OrderRepository orderRepository, KafkaTemplate<String, OrderPlaceEvent> kafkaTemplate) {
+			super();
+			this.orderRepository = orderRepository;
+			this.kafkaTemplate = kafkaTemplate;
+		}
+
+
+
+//	public OrderService(OrderRepository orderRepository) {
+//		super();
+//		this.orderRepository = orderRepository;
+//	}
 
 	public Order createOrder(OrderRequest orderRequest) {
 			Order order = new Order();
@@ -46,6 +67,11 @@ public class OrderService {
 			order.setOrderItems(list);
 			//save into db
 			orderRepository.save(order);
+			
+			//kafka
+			 kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(order.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
+			 
+			System.out.println("send event to notofication service");
 			
 			return order;
 		}
@@ -101,4 +127,5 @@ public class OrderService {
 			return orderReponse;
 		}
 
+		
 }
