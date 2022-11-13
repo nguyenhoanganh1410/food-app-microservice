@@ -15,6 +15,8 @@ import com.example.demo.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
 //import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -60,5 +62,13 @@ public class RedisService implements  UserDetailsService {
 	public void updateUser(User user){
 		redisTemplate.opsForHash().put("User", user.getId(), user);
 	}
-
+	public List<User> getlist() {
+		Map<Object, Object> a = redisTemplate.opsForHash().entries("User");
+		List<User>listUser = new ArrayList<>();
+		for(Object value: a.values()){
+			User user = (User) value;
+			listUser.add(user);
+		}
+		return listUser;
+	}
 }

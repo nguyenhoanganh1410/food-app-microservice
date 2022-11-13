@@ -1,13 +1,10 @@
 package com.example.demo.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 //import org.hibernate.engine.query.spi.sql.NativeSQLQueryCollectionReturn;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,10 +25,11 @@ import com.example.demo.mqservice.RedisService;
 import com.example.demo.payload.LoginRequest;
 import com.example.demo.payload.LoginResponse;
 import com.example.demo.payload.RandomStuff;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 //
-import ch.qos.logback.core.net.LoginAuthenticator;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping()
@@ -50,7 +48,8 @@ public class LodaRestController {
     private JwtTokenProvider tokenProvider;
     @Autowired
 	private JwtAuthenticationFilter authenticationFilter;
-   
+
+    //body username,password
     @PostMapping(value = "/register")
     public User Register( @Valid @RequestBody LoginRequest loginRequest) {
     		try {
@@ -76,11 +75,11 @@ public class LodaRestController {
             return user;
             }
 			} catch (Exception e) {
-				return new User(e.getMessage());
+				throw  new AppException(404,e.getMessage());
 			}
     		
     }
-
+    //body username,password
     @PostMapping(value = "/login", 	consumes = "application/json")
     public LoginResponse authenticateUser( @Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -130,6 +129,8 @@ public class LodaRestController {
 
 
     }
+    //Authorization : bearer token ----jwt
+    //get user with token
     @GetMapping("/user")
     public UserDetails getUserByJwt(HttpServletRequest request) {
     	
@@ -149,6 +150,7 @@ public class LodaRestController {
             throw new AppException(404, " User not found");
         
     }
+    //body id,username,password
     @PutMapping("user/update")
     public  RandomStuff updateUser( @RequestBody LoginRequest loginRequest){
         User user = new User();
@@ -158,7 +160,12 @@ public class LodaRestController {
         String passEncoder = passwordEncoder.encode(loginRequest.getPassword());
         user.setPassWord(passEncoder);
         redisService.updateUser(user);
-        return new RandomStuff("Update user thanh cong "+passEncoder);
+        return new RandomStuff("Update user successfully "+passEncoder);
+    }
+    //getlistuser permitAll for test
+    @GetMapping("/listuser")
+    public List<User> getlist() {
+        return  redisService.getlist();
     }
 
 }
