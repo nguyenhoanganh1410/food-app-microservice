@@ -71,4 +71,13 @@ public class RedisService implements  UserDetailsService {
 		}
 		return listUser;
 	}
+	public User getUserByIdUser(Long id) {
+
+		User user = (User) redisTemplate.opsForHash().get("User", id);
+		if(user ==null){
+			throw  new AppException(404,"user not found");
+		}
+
+		return user;
+	}
 }

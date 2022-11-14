@@ -60,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeHttpRequests((requests) -> requests
                         ///set permit listuser for test
-                        .antMatchers("/login", "/register","/listuser").permitAll()
+                        .antMatchers("/login", "/register","/listuser","/validateToken").permitAll()
                         .anyRequest().authenticated()
                 ); // Tất cả các request khác đều cần phải xác thực mới được truy cập
 

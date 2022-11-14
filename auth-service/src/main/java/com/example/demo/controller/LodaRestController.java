@@ -5,6 +5,7 @@ import javax.validation.Valid;
 
 //import org.hibernate.engine.query.spi.sql.NativeSQLQueryCollectionReturn;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping()
+
 public class LodaRestController {
 
     @Autowired
@@ -168,4 +170,23 @@ public class LodaRestController {
         return  redisService.getlist();
     }
 
+    @PostMapping ("/validateToken")
+    public ResponseEntity<User> getUserByJwtRequest(HttpServletRequest request) {
+
+
+        String jwt = authenticationFilter.getJwtFromRequest(request);
+        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            // Lấy id user từ chuỗi jwt
+            Long userId = tokenProvider.getUserIdFromJWT(jwt);
+            // Lấy thông tin người dùng từ id
+           User userDetails =  redisService.getUserByIdUser(userId);
+            if(userDetails != null) {
+                return ResponseEntity.ok(userDetails);
+
+            }
+
+        }
+        throw new AppException(404, " User not found");
+
+    }
 }
