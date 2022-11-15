@@ -1,6 +1,7 @@
 package com.example.productservice.dto;
 
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -8,7 +9,7 @@ import org.springframework.data.annotation.Id;
 
 
 
-public class ProductReponse {
+public class ProductReponse implements Serializable{
 	
 	private String id;
 	private String name;
