@@ -33,7 +33,7 @@ public class ProductService {
 		this.productRepository = productRepository;
 	}
 	
-//	@CachePut(value = "student", key = "#student.id")
+
 	public Product create(ProductRequest productRequest) {
 		Product p = new Product(productRequest.getName(), productRequest.getDesc(), productRequest.getPrice(), productRequest.getCategory(), productRequest.getImages());
 		
@@ -42,7 +42,7 @@ public class ProductService {
 		return p;
 	}
 
-	//@Cacheable(value = "product", key = "#id")
+	@Cacheable(value = "ProductReponse", key = "#id")
 	public ProductReponse getProductById(String id) {
 		System.out.println("product ppp");
 		// TODO Auto-generated method stub
@@ -58,6 +58,8 @@ public class ProductService {
 		return pReponse;
 		
 	}
+	
+	
 	
 	public ResponseEntity<Map<String, Object>> getListProduct(Integer page, Integer size, String category, String name) {
 		  try {
@@ -81,7 +83,8 @@ public class ProductService {
 		      response.put("totalItems", pageTuts.getTotalElements());
 		      response.put("totalPages", pageTuts.getTotalPages());
 
-		      return new ResponseEntity<>(response, HttpStatus.OK);
+		      return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		     
 		    } catch (Exception e) {
 		      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		    }
@@ -89,7 +92,7 @@ public class ProductService {
 	}
 
 
-
+	 @CachePut(value = "Product",key = "#id")
 	public Product updateProduct(ProductReponse productReponse, String id) {
 		Product p = new Product(id, productReponse.getName(), productReponse.getDesc(), productReponse.getPrice(), productReponse.getCategory(), productReponse.getImages());
 		productRepository.save(p);
