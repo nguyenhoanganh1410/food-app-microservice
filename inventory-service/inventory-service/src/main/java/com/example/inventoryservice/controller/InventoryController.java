@@ -60,7 +60,7 @@ public class InventoryController {
 	  @PutMapping()
 	  public ResponseEntity<InventoryReponse> updateInventory(@RequestParam String idProduct, @RequestBody InventoryRequest inventoryRequest) {
 	    InventoryReponse inventionData = inventoryService.getProductById(idProduct);
-	   // System.out.println("inventionData" + inventionData);
+	    System.out.println("inventionData1" + inventionData);
 	    if (inventionData == null) {
 			throw new InventoryNotFoundException("Product id not found: "
 					+ " " + idProduct);
@@ -73,7 +73,7 @@ public class InventoryController {
     
 	    System.out.println("inventionData" + inventionData.toString());
 	    
-	    Inventory p = inventoryService.updateInvention(inventionData, idProduct);
+	    InventoryReponse p = inventoryService.updateInvention(inventionData, idProduct);
 	    
 	    
 	    return  new ResponseEntity<>(inventionData, HttpStatus.OK);

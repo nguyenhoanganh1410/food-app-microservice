@@ -1,0 +1,9 @@
+spring:
+  application:
+   name: inventory-serivce
+  cache:
+    type: redis
+    cache-name: inventory
+    redis:
+      time-to-live: 60000
+      cache-null-values: true

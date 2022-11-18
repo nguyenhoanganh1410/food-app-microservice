@@ -1,5 +1,7 @@
 package com.example.inventoryservice.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_inventory")
 
-public class Inventory {
+public class Inventory implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
