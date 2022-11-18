@@ -1,0 +1,101 @@
+package com.example.inventoryservice.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.inventoryservice.dto.InventoryReponse;
+import com.example.inventoryservice.dto.InventoryRequest;
+import com.example.inventoryservice.entity.Inventory;
+import com.example.inventoryservice.repository.InventoryRepository;
+
+
+@Service
+@Transactional
+public class InventoryService {
+	@Autowired
+	private InventoryRepository inventoryRepository;
+
+	public void creatInventory(InventoryRequest inventoryRequest) {
+		// TODO Auto-generated method stub
+		Inventory i = new Inventory(inventoryRequest.getIdProduct(), inventoryRequest.getQuatity(), inventoryRequest.getNumberOfProductSoild());
+		inventoryRepository.save(i);
+	}
+
+	
+	public InventoryReponse getProductById(String id) {
+		// TODO Auto-generated method stub
+		Inventory i =  inventoryRepository.findByIdProduct(id);
+		if(i==null) {
+			return null;
+		}
+		InventoryReponse inventoryReponse = new InventoryReponse( i.getIdProduct(), i.getQuatity(), i.getNumberOfProductSoild());
+		//System.out.println(i.toString());
+		
+		return inventoryReponse;
+	}
+
+
+	public List<InventoryReponse> isInStock(List<String> idProducts) {
+		// TODO Auto-generated method stub
+		List<Inventory> list = inventoryRepository.findByIdProductIn(idProducts);
+		if(list.size() == 0) {
+			return null;
+		}
+		
+		List<InventoryReponse> listInventoryReponses = new ArrayList<InventoryReponse>();
+		list.forEach(val -> {
+			System.out.println(val.toString());
+			InventoryReponse i = new InventoryReponse(val.getIdProduct(), val.getQuatity(), val.getNumberOfProductSoild());
+			listInventoryReponses.add(i);
+		});
+		return listInventoryReponses;
+	}
+
+
+	public ResponseEntity<Map<String, Object>> getAllInventity(int page, int size) {
+		 try {
+		      List<Inventory> tutorials = new ArrayList<Inventory>();
+		      Pageable paging = PageRequest.of(page, size);
+		    
+		      Page<Inventory> pageTuts = null;
+		     
+		        pageTuts = inventoryRepository.findAll(paging);  
+		     
+		      tutorials = pageTuts.getContent();
+		     
+		      Map<String, Object> response = new HashMap<>();
+		      response.put("inventities", tutorials);
+		      response.put("currentPage", pageTuts.getNumber());
+		      response.put("totalItems", pageTuts.getTotalElements());
+		      response.put("totalPages", pageTuts.getTotalPages());
+
+		      return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		     
+		    } catch (Exception e) {
+		      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
+	}
+
+	public Inventory updateInvention(InventoryReponse inventionData, String idProduct) {
+		// TODO Auto-generated method stub
+		inventoryRepository.updateInventorySetQuatityForIdProductNative(inventionData.getQuatity(),inventionData.getNumberOfProductSoild(), idProduct);
+		return null;
+	}
+
+
+
+
+
+	
+}
