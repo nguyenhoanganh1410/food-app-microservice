@@ -90,8 +90,9 @@ public class ProductController {
 	    productData.setPrice(productRequest.getPrice());
 	    productData.setImages(productRequest.getImages());
 	    productData.setCategory(productRequest.getCategory());
+	   
 	    
-	    Product p = productService.updateProduct(productData, id);
+	    Product p = productService.updateProduct(productData, id, productRequest.getStock());
 	    
 	    
 	   return  new ResponseEntity<>(p, HttpStatus.OK);

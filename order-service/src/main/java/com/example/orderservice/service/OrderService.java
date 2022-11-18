@@ -2,6 +2,7 @@ package com.example.orderservice.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,12 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.example.orderservice.controller.OrderNotFoundException;
+import com.example.orderservice.dto.InventoryReponse;
+import com.example.orderservice.dto.InventoryRequest;
 import com.example.orderservice.dto.OrderLineDto;
 import com.example.orderservice.dto.OrderReponse;
 import com.example.orderservice.dto.OrderRequest;
@@ -34,14 +42,12 @@ public class OrderService {
 	@Autowired
 	private  KafkaTemplate<String, OrderPlaceEvent> kafkaTemplate;
 	
-	
-	
-	
+	@Autowired
+	private RestTemplate restTemplate;
+		
 	public OrderService() {
 		super();
 	}
-
-
 
 	public OrderService(OrderRepository orderRepository, KafkaTemplate<String, OrderPlaceEvent> kafkaTemplate) {
 			super();
@@ -49,12 +55,6 @@ public class OrderService {
 			this.kafkaTemplate = kafkaTemplate;
 		}
 
-
-
-//	public OrderService(OrderRepository orderRepository) {
-//		super();
-//		this.orderRepository = orderRepository;
-//	}
 
 	public Order createOrder(OrderRequest orderRequest) {
 			Order order = new Order();
@@ -65,11 +65,37 @@ public class OrderService {
 			order.setCustomerAddress(orderRequest.getCustomerAddress());
 			order.setCustomerEmail(orderRequest.getCustomerEmail());
 			order.setOrderItems(list);
-			//save into db
-			orderRepository.save(order);
+			
+			//check inventory in here
+			//call inventory service -> get quantyti product
+			list.forEach(val ->{
+				
+				InventoryReponse d =  restTemplate.getForObject("http://localhost:8089/v1/api/inventory?idProduct=" + val.getProductId(), InventoryReponse.class);
+				System.out.println("inventory "+ d.toString());
+				//check isInStock or not
+				if(d.getQuatity() < val.getQuatity()) {
+					System.out.println("Khong du hang roi");
+					//throw new IllegalArgumentException("Product is not in stock, please try again later");
+					throw new OrderNotFoundException("Product is not in stock, please try again later ");
+				}
+			});
+			
+//			//save into db
+			Order orderSave = orderRepository.save(order);
+			
+			//call api for update quatity in Inventory Service
+			// create headers
+			list.forEach(val ->{
+				    Map < String, String > params = new HashMap < String, String > ();
+			        params.put("idProduct", val.getProductId());
+			        InventoryRequest i = new InventoryRequest(val.getProductId(),val.getQuatity());
+			      
+			        restTemplate.put("http://localhost:8089/v1/api/inventory?idProduct="+val.getProductId(), i);
+			});
+			
 			
 			//kafka
-			 kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(order.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
+			kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(orderSave.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
 			 
 			System.out.println("send event to notofication service");
 			
@@ -82,6 +108,7 @@ public class OrderService {
 			OrderItem o = new OrderItem(item.getProductName(),item.getProductId(), item.getPrice(), item.getQuatity());
 			return o;
 		}
+		
 		
 		public ResponseEntity<Map<String, Object>> getOrdersByEmail(int page,int size,String customerEmail) {
 			  try {

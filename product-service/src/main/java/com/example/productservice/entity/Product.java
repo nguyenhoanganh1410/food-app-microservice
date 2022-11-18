@@ -15,25 +15,12 @@ public class Product implements Serializable{
 	private String desc;
 	private BigDecimal price;
 	private String category;
-	private boolean stock = true;
+	private int stock;
 	private ArrayList<String> images;
 	public Product() {
 		super();
 	}
-	
-	public Product(String name, String desc, BigDecimal price, String category,
-			ArrayList<String> images) {
-		super();
-		this.name = name;
-		this.desc = desc;
-		this.price = price;
-		this.category = category;
-	
-		this.images = images;
-	}
-
-	
-	public Product(String id, String name, String desc, BigDecimal price, String category,
+	public Product(String id, String name, String desc, BigDecimal price, String category, int stock,
 			ArrayList<String> images) {
 		super();
 		this.id = id;
@@ -41,10 +28,18 @@ public class Product implements Serializable{
 		this.desc = desc;
 		this.price = price;
 		this.category = category;
-		
+		this.stock = stock;
 		this.images = images;
 	}
-
+	public Product(String name, String desc, BigDecimal price, String category, int stock, ArrayList<String> images) {
+		super();
+		this.name = name;
+		this.desc = desc;
+		this.price = price;
+		this.category = category;
+		this.stock = stock;
+		this.images = images;
+	}
 	public String getId() {
 		return id;
 	}
@@ -75,10 +70,10 @@ public class Product implements Serializable{
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public boolean isStock() {
+	public int getStock() {
 		return stock;
 	}
-	public void setStock(boolean stock) {
+	public void setStock(int stock) {
 		this.stock = stock;
 	}
 	public ArrayList<String> getImages() {
@@ -87,6 +82,13 @@ public class Product implements Serializable{
 	public void setImages(ArrayList<String> images) {
 		this.images = images;
 	}
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", name=" + name + ", desc=" + desc + ", price=" + price + ", category=" + category
+				+ ", stock=" + stock + ", images=" + images + "]";
+	}
+	
+	
 	
 	
 	

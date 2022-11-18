@@ -8,11 +8,6 @@ public class OrderPlaceEvent {
 	 private String cusomterEmail;
 	 private String cusomterAddress;
 	 private Date createAt = new Date();
-	
-	 
-
-
-		
 
 	public String getCusomterAddress() {
 		return cusomterAddress;

@@ -10,11 +10,6 @@ public class OrderPlaceEvent {
 	 private String cusomterAddress;
 	 private Date createAt = new Date();
 	
-	 
-
-
-		
-
 	public Date getCreateAt() {
 		return createAt;
 	}
@@ -60,6 +55,12 @@ public class OrderPlaceEvent {
 
 	public void setOrderNumber(Long orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "OrderPlaceEvent [orderNumber=" + orderNumber + ", cusomterEmail=" + cusomterEmail + ", cusomterAddress="
+				+ cusomterAddress + ", createAt=" + createAt + "]";
 	}
 	 
 	 

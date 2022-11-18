@@ -27,20 +27,19 @@ public class NotificationServiceApplication {
     public void handleNotification(OrderPlaceEvent orderPlacedEvent) {
         // send out an email notification
        System.out.println(("Received Notification for Order - {}"+orderPlacedEvent.getCusomterEmail() ));
+       System.out.println("order mess" + orderPlacedEvent);
 //       EmailDetails emailDetails = new EmailDetails(orderPlacedEvent.getCusomterEmail(), "Đơn hàng của bạn đã đặt thành công với mã là : " + orderPlacedEvent.getOrderNumber(), "FoodApp - Đặt hàng thành công");
        EmailDetails emailDetails = new EmailDetails(orderPlacedEvent.getCusomterEmail(), "[Food App]\n"
-       		+ "		\n"
-       		+ "		Woo hoo! Your order is on its way. Your order details can be found below.\n"
-       		+ "		\n"
+       		+ "	\n"
+       		+ "Woo hoo! Your order is on its way. Your order details can be found below.\n"
+       		+ "	\n"
 
-       		+ "		\n"
-       		+ "		Order #: ["+orderPlacedEvent.getOrderNumber()+"]\n"
-       		+ "		Order Date: ["+orderPlacedEvent.getCreateAt()+"]"
- 
-       		+ "		\n"
-       		+ "		SHIPPING ADDRESS: ["+orderPlacedEvent.getCusomterAddress()+"]\n"
-       	
-       		+ "		Thank you for placing your order!\n"
+       		+ "\n"
+       		+ "Order #: ["+orderPlacedEvent.getOrderNumber()+"]\n"
+       		+ "Order Date: ["+orderPlacedEvent.getCreateAt()+"]\n"
+       		+ "SHIPPING ADDRESS: ["+orderPlacedEvent.getCusomterAddress()+"]\n"
+       		+ "\n"
+       		+ "Thank you for placing your order!\n"
        		
        		+ " : " , "FoodApp - Đặt hàng thành công");
        String status = emailService.sendSimpleMail(emailDetails);
