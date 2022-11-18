@@ -16,10 +16,13 @@ public class ProductReponse implements Serializable{
 	private String desc;
 	private BigDecimal price;
 	private String category;
-	private boolean stock = true;
+	private int stock;
 	private ArrayList<String> images;
 	
-	public ProductReponse(String id, String name, String desc, BigDecimal price, String category, boolean stock,
+	public int getStock() {
+		return stock;
+	}
+	public ProductReponse(String id, String name, String desc, BigDecimal price, String category, int stock,
 			ArrayList<String> images) {
 		super();
 		this.id = id;
@@ -63,10 +66,8 @@ public class ProductReponse implements Serializable{
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public boolean isStock() {
-		return stock;
-	}
-	public void setStock(boolean stock) {
+	
+	public void setStock(int stock) {
 		this.stock = stock;
 	}
 	public ArrayList<String> getImages() {

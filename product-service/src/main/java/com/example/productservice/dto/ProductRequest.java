@@ -16,6 +16,7 @@ public class ProductRequest {
 	private BigDecimal price;
 	private String category;
 	private ArrayList<String> images;
+	private Integer stock;
 	
 	public ProductRequest() {
 		super();
@@ -51,6 +52,14 @@ public class ProductRequest {
 	}
 	public void setImages(ArrayList<String> images) {
 		this.images = images;
+	}
+
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
 	}
 	
 	

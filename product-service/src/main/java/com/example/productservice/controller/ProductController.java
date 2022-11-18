@@ -90,6 +90,7 @@ public class ProductController {
 	    productData.setPrice(productRequest.getPrice());
 	    productData.setImages(productRequest.getImages());
 	    productData.setCategory(productRequest.getCategory());
+	    productData.setStock(productRequest.getStock());
 	    
 	    Product p = productService.updateProduct(productData, id);
 	    
