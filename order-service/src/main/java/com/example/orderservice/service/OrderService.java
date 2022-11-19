@@ -44,6 +44,8 @@ public class OrderService {
 	
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	private int count = 0;
 		
 	public OrderService() {
 		super();
@@ -57,6 +59,7 @@ public class OrderService {
 
 
 	public Order createOrder(OrderRequest orderRequest) {
+		System.out.println("call count: " + ++count);
 			Order order = new Order();
 						
 			List<OrderItem> list = orderRequest.getOrderLineDtos().stream().map(this::mapToDto).toList();
@@ -70,7 +73,7 @@ public class OrderService {
 			//call inventory service -> get quantyti product
 			list.forEach(val ->{
 				
-				InventoryReponse d =  restTemplate.getForObject("http://localhost:8089/v1/api/inventory?idProduct=" + val.getProductId(), InventoryReponse.class);
+				InventoryReponse d =  restTemplate.getForObject("http://INVENTORY-SERVICE/v1/api/inventory?idProduct=" + val.getProductId(), InventoryReponse.class);
 				System.out.println("inventory "+ d.toString());
 				//check isInStock or not
 				if(d.getQuatity() < val.getQuatity()) {
@@ -90,7 +93,7 @@ public class OrderService {
 			        params.put("idProduct", val.getProductId());
 			        InventoryRequest i = new InventoryRequest(val.getProductId(),val.getQuatity());
 			      
-			        restTemplate.put("http://localhost:8089/v1/api/inventory?idProduct="+val.getProductId(), i);
+			        restTemplate.put("http://INVENTORY-SERVICE/v1/api/inventory?idProduct="+val.getProductId(), i);
 			});
 			
 			

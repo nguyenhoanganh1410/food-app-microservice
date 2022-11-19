@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,9 @@ import com.example.orderservice.dto.OrderReponse;
 import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.service.OrderService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+
 @RestController
 @RequestMapping("/v1/api/orders")
 public class OrderController {
@@ -27,10 +31,17 @@ public class OrderController {
 	private OrderService service;
 	
 	@PostMapping
-	public ResponseEntity create(@RequestBody OrderRequest orderRequest) {
+    @CircuitBreaker(name = "inventory")
+	@Retry(name = "inventory",  fallbackMethod = "fallbackMethod")
+	public String create(@RequestBody OrderRequest orderRequest) {
 		service.createOrder(orderRequest);
-		return new ResponseEntity<>(orderRequest, HttpStatus.CREATED);
+		//return new ResponseEntity<>(orderRequest, HttpStatus.CREATED);
+		return "Place an order sucessfully!!";
 	}
+	
+	public String fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
+        return  "Oops! Something went wrong, please order after some time!";
+    }
 	
 	@GetMapping("/{id}")
 	@ResponseStatus(value = HttpStatus.OK)
