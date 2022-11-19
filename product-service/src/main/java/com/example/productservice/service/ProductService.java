@@ -52,7 +52,7 @@ public class ProductService {
 	//	System.out.println(product.toString());
 		//call api save into inventory service
 		// request url
-		String url = "http://localhost:8089/v1/api/inventory";
+		String url = "http://INVENTORY-SERVICE/v1/api/inventory";
 
 		// create headers
 		HttpHeaders headers = new HttpHeaders();

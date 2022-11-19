@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8087
 
 management:
   endpoint.gateway.enabled: true
@@ -11,17 +11,22 @@ spring:
     gateway:
       discovery.locator.enabled: true
       routes:
-        - id: hello-service
-          uri: lb://hello-service
+        - id: PRODUCT-SERVICE
+          uri: lb://PRODUCT-SERVICE
           predicates:
-            Path=/api/**
-          filters:
-            - AuthFilter
-        - id: auth-service
-          uri: lb://auth-service
+            - Path=/v1/api/**
+        - id: INVENTORY-SERVICE
+          uri: lb://INVENTORY-SERVICE
           predicates:
-            - Path=/**
-
+            - Path=/v1/api/**
+        - id: NOTIFICATION-SERVICE
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/v1/api/**
+        - id: ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/v1/api/**
 eureka:
   client:
     serviceUrl:

@@ -1,9 +1,12 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: 'true'
+    register-with-eureka: 'true'
+  instance:
+    hostname: localhost
+
 spring:
   application:
-   name: inventory-serivce
-  cache:
-    type: redis
-    cache-name: inventory
-    redis:
-      time-to-live: 60000
-      cache-null-values: true
+   name: INVENTORY-SERVICE

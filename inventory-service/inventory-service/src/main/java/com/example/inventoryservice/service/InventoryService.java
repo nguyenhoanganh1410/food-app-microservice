@@ -38,16 +38,6 @@ public class InventoryService {
 	@Autowired
     private RedisTemplate<String, InventoryReponse> template;
 	
-//	 private HashOperations<String, Integer, InventoryReponse> hashOperations;
-//	 private final String INVENTORY_CACHE = "INVENTORY";
-//	 
-//	 // This annotation makes sure that the method needs to be executed after
-//	    // dependency injection is done to perform any initialization.
-//	    @PostConstruct
-//	    private void intializeHashOperations() {
-//	        hashOperations = template.opsForHash();
-//	    }
-
 	public void creatInventory(InventoryRequest inventoryRequest) {
 		// TODO Auto-generated method stub
 		Inventory i = new Inventory(inventoryRequest.getIdProduct(), inventoryRequest.getQuatity(), inventoryRequest.getNumberOfProductSoild());
@@ -63,7 +53,7 @@ public class InventoryService {
 	     //check trong redis
 	     if (hasKey) {
 	            final InventoryReponse inventoryReponse =  (InventoryReponse) operations.get(key);
-	            System.out.println("InventoryResponse : cache post >> " + inventoryReponse.toString());
+	            System.out.println("InventoryResponse : cache get >> " + inventoryReponse.toString());
 	            return inventoryReponse;
 	      }
 		 
