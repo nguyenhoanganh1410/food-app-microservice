@@ -1,6 +1,7 @@
 package com.example.orderservice.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +60,8 @@ public class OrderService {
 
 
 	public Order createOrder(OrderRequest orderRequest) {
-		System.out.println("call count: " + ++count);
+		
+		 System.out.println(" Making a request " + ++count + " at :" + LocalDateTime.now());
 			Order order = new Order();
 						
 			List<OrderItem> list = orderRequest.getOrderLineDtos().stream().map(this::mapToDto).toList();
@@ -83,7 +85,7 @@ public class OrderService {
 				}
 			});
 			
-//			//save into db
+			//save into db
 			Order orderSave = orderRepository.save(order);
 			
 			//call api for update quatity in Inventory Service
@@ -98,9 +100,9 @@ public class OrderService {
 			
 			
 //			//kafka
-//			kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(orderSave.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
-//			 
-//			System.out.println("send event to notofication service");
+			kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(orderSave.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
+			 
+			System.out.println("send event to notofication service");
 			
 			return order;
 		}

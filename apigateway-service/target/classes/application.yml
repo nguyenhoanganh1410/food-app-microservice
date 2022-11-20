@@ -11,6 +11,10 @@ spring:
     gateway:
       discovery.locator.enabled: true
       routes:
+        - id: ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/v1/api/**
         - id: PRODUCT-SERVICE
           uri: lb://PRODUCT-SERVICE
           predicates:
@@ -23,10 +27,7 @@ spring:
           uri: lb://NOTIFICATION-SERVICE
           predicates:
             - Path=/v1/api/**
-        - id: ORDER-SERVICE
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/v1/api/**
+
 eureka:
   client:
     serviceUrl:

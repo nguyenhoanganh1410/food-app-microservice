@@ -21,6 +21,7 @@ import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.service.OrderService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
@@ -31,8 +32,9 @@ public class OrderController {
 	private OrderService service;
 	
 	@PostMapping
-    @CircuitBreaker(name = "inventory")
-	@Retry(name = "inventory",  fallbackMethod = "fallbackMethod")
+    @CircuitBreaker(name = "inventory",  fallbackMethod = "fallbackMethod")
+	@Retry(name = "inventory", fallbackMethod = "fallbackMethod")
+	@RateLimiter(name = "inventory", fallbackMethod = "rateLimiterMethod")
 	public String create(@RequestBody OrderRequest orderRequest) {
 		service.createOrder(orderRequest);
 		//return new ResponseEntity<>(orderRequest, HttpStatus.CREATED);
@@ -41,6 +43,9 @@ public class OrderController {
 	
 	public String fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
         return  "Oops! Something went wrong, please order after some time!";
+    }
+	public String rateLimiterMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
+        return  "Oops! order service does not permit futher calls, please order after some time!";
     }
 	
 	@GetMapping("/{id}")

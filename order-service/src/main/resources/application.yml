@@ -20,13 +20,19 @@ resilience4j:
         failureRateThreshold: 50
         minimumNumberOfCalls: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 5s
+        waitDurationInOpenState: 1m
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowSize: 10
         slidingWindowType: COUNT_BASED
   retry:
     instances:
       inventory:
-        maxRetryAttempts: 6
-        waitDuration: 5s
-
+        max-attempts: 5
+        wait-duration: 5s
+  ratelimiter:
+    instances:
+      inventory:
+        registerHealthIndicator: false
+        limitForPeriod: 10
+        limitRefreshPeriod: 60s
+        timeoutDuration: 3s
