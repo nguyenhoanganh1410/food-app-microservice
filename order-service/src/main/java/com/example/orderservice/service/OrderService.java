@@ -100,10 +100,10 @@ public class OrderService {
 			
 			
 //			//kafka
-			kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(orderSave.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
-			 
-			System.out.println("send event to notofication service");
-			
+//			kafkaTemplate.send("notificationTopic", new OrderPlaceEvent(orderSave.getId(), order.getCustomerEmail(), order.getCustomerAddress()));
+//			 
+//			System.out.println("send event to notofication service");
+//			
 			return order;
 		}
 	

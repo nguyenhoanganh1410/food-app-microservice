@@ -31,6 +31,7 @@ public class OrderController {
 	@Autowired
 	private OrderService service;
 	
+	
 	@PostMapping
     @CircuitBreaker(name = "inventory",  fallbackMethod = "fallbackMethod")
 	@Retry(name = "inventory", fallbackMethod = "fallbackMethod")

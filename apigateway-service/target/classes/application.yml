@@ -14,19 +14,22 @@ spring:
         - id: ORDER-SERVICE
           uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/v1/api/**
+            - Path=/v1/api/orders/**
+          filters:
+           - AuthFilter
         - id: PRODUCT-SERVICE
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/v1/api/**
+            - Path=/v1/api/products/**
         - id: INVENTORY-SERVICE
           uri: lb://INVENTORY-SERVICE
           predicates:
-            - Path=/v1/api/**
-        - id: NOTIFICATION-SERVICE
-          uri: lb://NOTIFICATION-SERVICE
+            - Path=/v1/api/inventory/**
+        - id: auth-service
+          uri: lb://auth-service
           predicates:
-            - Path=/v1/api/**
+              Path=/**
+
 
 eureka:
   client:
